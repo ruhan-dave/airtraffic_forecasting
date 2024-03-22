@@ -16,7 +16,7 @@ st.header("This application predicts the total passengers of user-specified comb
 st.subheader("At this time, the forecasting model was updated with before December 2023 and works for a year ahead")
 st.write("Specify input conditions (parameters)")
 
-df = pd.read_csv("/Users/owner/myvirtenv/time_series_forecasting/before_encoding.csv")
+df = pd.read_csv("./before_encoding.csv")
 
 order = ['count_by_airline', 'count_by_price_category',
        'count_by_geo', 'count_by_region', 'count_by_activity_code',
@@ -57,10 +57,10 @@ def user_inputs():
     return x_input
 
 # upload the already-trained xgb model (as a pickle file) 
-model_pkl_file = "/Users/owner/myvirtenv/time_series_forecasting/submit_model.pkl"  
-mean_encode_dict_file = "/Users/owner/myvirtenv/time_series_forecasting/mean_encoding_dict.json"
-prob_ratio_dict_file = "/Users/owner/myvirtenv/time_series_forecasting/prob_ratio.json"
-count_dict_file = "/Users/owner/myvirtenv/time_series_forecasting/count_dict.json"
+model_pkl_file = "./submit_model.pkl"  
+mean_encode_dict_file = "./mean_encoding_dict.json"
+prob_ratio_dict_file = "./prob_ratio.json"
+count_dict_file = "./count_dict.json"
 
 model = pickle.load(open(model_pkl_file, 'rb'))
 
