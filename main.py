@@ -1,4 +1,5 @@
 import streamlit as st 
+from st_files_connection import FilesConnection
 import pandas as pd 
 import numpy as np
 # import scipy as sp
@@ -7,8 +8,11 @@ import datetime as dt
 import json
 from xgboost import plot_importance
 from xgboost.sklearn import XGBRegressor as XGBR
+import boto3
+from io import BytesIO
 # from collections import Counter
 
+conn = st.connection('s3', type=FilesConnection)
 
 st.title("Traffic Forecasting for the San Francisco International Airport")
 st.header("This application predicts the total passengers of user-specified combinations", 
@@ -16,8 +20,9 @@ st.header("This application predicts the total passengers of user-specified comb
 st.subheader("At this time, the forecasting model was updated with before December 2023 and works for a year ahead")
 st.write("Specify input conditions (parameters)")
 
-df = pd.read_csv("./before_encoding.csv")
-
+# df = pd.read_csv("/Users/owner/myvirtenv/time_series_forecasting/before_encoding.csv")
+df = conn.read("airtraffic/before_encoding.csv", input_format="csv", ttl=600)
+               
 order = ['count_by_airline', 'count_by_price_category',
        'count_by_geo', 'count_by_region', 'count_by_activity_code',
        'count_by_operating_code', 'count_by_terminal',
@@ -56,22 +61,17 @@ def user_inputs():
     x_input = pd.DataFrame(data, index=[0])
     return x_input
 
-# upload the already-trained xgb model (as a pickle file) 
-model_pkl_file = "./submit_model.pkl"  
-mean_encode_dict_file = "./mean_encoding_dict.json"
-prob_ratio_dict_file = "./prob_ratio.json"
-count_dict_file = "./count_dict.json"
+s3 = boto3.resource('s3')
 
-model = pickle.load(open(model_pkl_file, 'rb'))
+with BytesIO() as data:
+    s3.Bucket("airtraffic").download_fileobj("submit_model.pkl", data)
+    data.seek(0)    # move back to the beginning after writing
+    model = pickle.load(data)
 
-with open(mean_encode_dict_file) as json_file:
-    mean_encode_dict = json.load(json_file)
-
-with open(count_dict_file) as json_file:
-    count_dict = json.load(json_file)
-
-with open(prob_ratio_dict_file) as json_file:
-    prob_ratio_dict = json.load(json_file)
+# model = conn.read("airtraffic/submit_model.pkl", input_format="pkl")
+count_dict = conn.read("airtraffic/count_dict.json", input_format="json", ttl=600)
+mean_encode_dict = conn.read("airtraffic/mean_encoding_dict.json", input_format="json", ttl=600)
+prob_ratio_dict = conn.read("airtraffic/prob_ratio.json", input_format="json", ttl=600)
 
 x_input = user_inputs()
 st.write('You selected:')
