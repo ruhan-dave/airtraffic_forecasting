@@ -9,7 +9,6 @@ import json
 from xgboost import plot_importance
 from xgboost.sklearn import XGBRegressor as XGBR
 import boto3
-import feature_engine
 from io import BytesIO
 # from collections import Counter
 
