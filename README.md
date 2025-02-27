@@ -43,8 +43,10 @@ Deployed the model on Streamlit by first designing an intuitive Streamlit interf
 
 3. Outcomes Achieved
 
-Quantifiable Results:
+#### Quantifiable Results:
+
 Built a streamlit web application that users can input information about the airline, destination, year, month, gate, flight type, operation type, and more. With the time series deployed on AWS S3, the user can then check the demand for the specific month and year! 
 
-Impact:
+#### Impact:
+
 This highly accurate time-series forecasting project significantly helps with planning and traffic management. Moreover, this can also help with setting plane ticket prices depending on demand. 
